@@ -1,0 +1,217 @@
+--- gcc-5.4.0/libstdc++-v3/configure	2015-11-26 13:51:04.000000000 +0000
++++ gcc-5.4.0_fix/libstdc++-v3/configure	2017-06-15 13:58:51.325269293 +0100
+@@ -28002,6 +28002,55 @@
+     # This is a freestanding configuration; there is nothing to do here.
+     ;;
+ 
++  avr*-*-*)
++    $as_echo "#define HAVE_ACOSF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_ASINF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_ATAN2F 1" >>confdefs.h
++
++    $as_echo "#define HAVE_ATANF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_CEILF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_COSF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_COSHF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_EXPF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_FABSF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_FLOORF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_FMODF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_FREXPF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_SQRTF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_HYPOTF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_LDEXPF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_LOG10F 1" >>confdefs.h
++
++    $as_echo "#define HAVE_LOGF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_MODFF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_POWF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_SINF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_SINHF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_TANF 1" >>confdefs.h
++
++    $as_echo "#define HAVE_TANHF 1" >>confdefs.h
++
++    ;;
++
+   mips*-sde-elf*)
+     # These definitions are for the SDE C library rather than newlib.
+     SECTION_FLAGS='-ffunction-sections -fdata-sections'
+Only in gcc-5.4.0_fix/libstdc++-v3: configure.orig
+diff -aur gcc-5.4.0/libstdc++-v3/crossconfig.m4 gcc-5.4.0_fix/libstdc++-v3/crossconfig.m4
+--- gcc-5.4.0/libstdc++-v3/crossconfig.m4	2014-04-22 13:30:59.000000000 +0100
++++ gcc-5.4.0_fix/libstdc++-v3/crossconfig.m4	2017-06-15 13:58:51.325269293 +0100
+@@ -9,6 +9,32 @@
+     # This is a freestanding configuration; there is nothing to do here.
+     ;;
+ 
++  avr*-*-*)
++    AC_DEFINE(HAVE_ACOSF)
++    AC_DEFINE(HAVE_ASINF)
++    AC_DEFINE(HAVE_ATAN2F)
++    AC_DEFINE(HAVE_ATANF)
++    AC_DEFINE(HAVE_CEILF)
++    AC_DEFINE(HAVE_COSF)
++    AC_DEFINE(HAVE_COSHF)
++    AC_DEFINE(HAVE_EXPF)
++    AC_DEFINE(HAVE_FABSF)
++    AC_DEFINE(HAVE_FLOORF)
++    AC_DEFINE(HAVE_FMODF)
++    AC_DEFINE(HAVE_FREXPF)
++    AC_DEFINE(HAVE_SQRTF)
++    AC_DEFINE(HAVE_HYPOTF)
++    AC_DEFINE(HAVE_LDEXPF)
++    AC_DEFINE(HAVE_LOG10F)
++    AC_DEFINE(HAVE_LOGF)
++    AC_DEFINE(HAVE_MODFF)
++    AC_DEFINE(HAVE_POWF)
++    AC_DEFINE(HAVE_SINF)
++    AC_DEFINE(HAVE_SINHF)
++    AC_DEFINE(HAVE_TANF)
++    AC_DEFINE(HAVE_TANHF)
++    ;;
++
+   mips*-sde-elf*)
+     # These definitions are for the SDE C library rather than newlib.
+     SECTION_FLAGS='-ffunction-sections -fdata-sections'
+diff -aur gcc-5.4.0/libstdc++-v3/include/bits/locale_facets_nonio.tcc gcc-5.4.0_fix/libstdc++-v3/include/bits/locale_facets_nonio.tcc
+--- gcc-5.4.0/libstdc++-v3/include/bits/locale_facets_nonio.tcc	2015-01-05 12:33:28.000000000 +0000
++++ gcc-5.4.0_fix/libstdc++-v3/include/bits/locale_facets_nonio.tcc	2017-06-15 14:26:07.000000000 +0100
+@@ -659,30 +659,38 @@
+ 		  // Abbreviated weekday name [tm_wday]
+ 		  const char_type*  __days1[7];
+ 		  __tp._M_days_abbreviated(__days1);
+-		  __beg = _M_extract_name(__beg, __end, __tm->tm_wday, __days1,
++                  __tm->tm_wday = __mem;
++		  __beg = _M_extract_name(__beg, __end, __mem, __days1,
+ 					  7, __io, __tmperr);
++                  __mem = __tm->tm_wday;
+ 		  break;
+ 		case 'A':
+ 		  // Weekday name [tm_wday].
+ 		  const char_type*  __days2[7];
+ 		  __tp._M_days(__days2);
+-		  __beg = _M_extract_name(__beg, __end, __tm->tm_wday, __days2,
++                  __mem = __tm->tm_wday;
++		  __beg = _M_extract_name(__beg, __end, __mem, __days2,
+ 					  7, __io, __tmperr);
++                  __tm->tm_wday = __mem;
+ 		  break;
+ 		case 'h':
+ 		case 'b':
+ 		  // Abbreviated month name [tm_mon]
+ 		  const char_type*  __months1[12];
+ 		  __tp._M_months_abbreviated(__months1);
+-		  __beg = _M_extract_name(__beg, __end, __tm->tm_mon, 
++                  __mem = __tm->tm_mon;
++		  __beg = _M_extract_name(__beg, __end, __mem, 
+ 					  __months1, 12, __io, __tmperr);
++                  __tm->tm_mon = __mem;
+ 		  break;
+ 		case 'B':
+ 		  // Month name [tm_mon].
+ 		  const char_type*  __months2[12];
+ 		  __tp._M_months(__months2);
+-		  __beg = _M_extract_name(__beg, __end, __tm->tm_mon, 
++                  __mem = __tm->tm_mon;
++		  __beg = _M_extract_name(__beg, __end, __mem, 
+ 					  __months2, 12, __io, __tmperr);
++                  __tm->tm_mon = __mem;
+ 		  break;
+ 		case 'c':
+ 		  // Default time and date representation.
+@@ -693,18 +701,22 @@
+ 		  break;
+ 		case 'd':
+ 		  // Day [01, 31]. [tm_mday]
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_mday, 1, 31, 2,
++                  __mem = __tm->tm_mday;
++		  __beg = _M_extract_num(__beg, __end, __mem, 1, 31, 2,
+ 					 __io, __tmperr);
++                  __tm->tm_mday = __mem;
+ 		  break;
+ 		case 'e':
+ 		  // Day [1, 31], with single digits preceded by
+ 		  // space. [tm_mday]
++                  __mem = __tm->tm_mday;
+ 		  if (__ctype.is(ctype_base::space, *__beg))
+-		    __beg = _M_extract_num(++__beg, __end, __tm->tm_mday, 1, 9,
++		    __beg = _M_extract_num(++__beg, __end, __mem, 1, 9,
+ 					   1, __io, __tmperr);
+ 		  else
+-		    __beg = _M_extract_num(__beg, __end, __tm->tm_mday, 10, 31,
++		    __beg = _M_extract_num(__beg, __end, __mem, 10, 31,
+ 					   2, __io, __tmperr);
++                  __tm->tm_mday = __mem;
+ 		  break;
+ 		case 'D':
+ 		  // Equivalent to %m/%d/%y.[tm_mon, tm_mday, tm_year]
+@@ -715,13 +727,17 @@
+ 		  break;
+ 		case 'H':
+ 		  // Hour [00, 23]. [tm_hour]
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_hour, 0, 23, 2,
++                  __mem = __tm->tm_hour;
++		  __beg = _M_extract_num(__beg, __end, __mem, 0, 23, 2,
+ 					 __io, __tmperr);
++                  __tm->tm_hour = __mem;
+ 		  break;
+ 		case 'I':
+ 		  // Hour [01, 12]. [tm_hour]
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_hour, 1, 12, 2,
++                  __mem = __tm->tm_hour;
++		  __beg = _M_extract_num(__beg, __end, __mem, 1, 12, 2,
+ 					 __io, __tmperr);
++                  __tm->tm_hour = __mem;
+ 		  break;
+ 		case 'm':
+ 		  // Month [01, 12]. [tm_mon]
+@@ -732,8 +748,10 @@
+ 		  break;
+ 		case 'M':
+ 		  // Minute [00, 59]. [tm_min]
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_min, 0, 59, 2,
++                  __mem = __tm->tm_min;
++		  __beg = _M_extract_num(__beg, __end, __mem, 0, 59, 2,
+ 					 __io, __tmperr);
++                  __tm->tm_min = __mem;
+ 		  break;
+ 		case 'n':
+ 		  if (__ctype.narrow(*__beg, 0) == '\n')
+@@ -751,12 +769,14 @@
+ 		case 'S':
+ 		  // Seconds. [tm_sec]
+ 		  // [00, 60] in C99 (one leap-second), [00, 61] in C89.
++			__mem = __tm->tm_sec;
+ #ifdef _GLIBCXX_USE_C99
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_sec, 0, 60, 2,
++		  __beg = _M_extract_num(__beg, __end, __mem, 0, 60, 2,
+ #else
+-		  __beg = _M_extract_num(__beg, __end, __tm->tm_sec, 0, 61, 2,
++		  __beg = _M_extract_num(__beg, __end, __mem, 0, 61, 2,
+ #endif
+ 					 __io, __tmperr);
++			__tm->tm_sec = __mem;
+ 		  break;
+ 		case 't':
+ 		  if (__ctype.narrow(*__beg, 0) == '\t')
+
